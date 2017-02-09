@@ -1,8 +1,9 @@
 =====
-mysql
+mariadb
 =====
 
-Install the MySQL client and/or server.
+Install the MariaDB client and/or server.
+This is based on the SaltStack MySQL formula
 
 .. note::
 
@@ -15,25 +16,25 @@ Available states
 .. contents::
     :local:
 
-``mysql``
+``mariadb``
 ---------
 
 Meta-state that includes all server packages in the correct order.
 
-This meta-state does **not** include ``mysql.remove_test_database``; see
+This meta-state does **not** include ``mariadb.remove_test_database``; see
 below for details.
 
-``mysql.client``
+``mariadb.client``
 ----------------
 
-Install the MySQL client package.
+Install the MariaDB client package.
 
-``mysql.server``
+``mariadb.server``
 ----------------
 
-Install the MySQL server package and start the service.
+Install the MariaDB server package and start the service.
 
-Debian OS family supports setting MySQL root password during install via
+Debian OS family supports setting MariaDB root password during install via
 debconf.
 
 .. note::
@@ -45,64 +46,64 @@ debconf.
     cryptographically insecure, future formula versions should use the
     newly available ``random.get_str`` method.
 
-``mysql.disabled``
+``mariadb.disabled``
 ------------------
 
-Ensure that the MySQL service is not running.
+Ensure that the MariaDB service is not running.
 
-``mysql.database``
+``mariadb.database``
 ------------------
 
-Create and manage MySQL databases.
+Create and manage MariaDB databases.
 
-``mysql.python``
+``mariadb.python``
 ----------------
 
-Install mysql python bindings.
+Install mariadb python bindings.
 
-``mysql.user``
+``mariadb.user``
 --------------
 
-Create and manage MySQL database users with definable GRANT privileges.
+Create and manage MariaDB database users with definable GRANT privileges.
 
-The state accepts MySQL hashed passwords or clear text. Hashed password have
+The state accepts MariaDB hashed passwords or clear text. Hashed password have
 priority.
 
 .. note::
-    See the `salt.states.mysql_user
-    <http://docs.saltstack.com/en/latest/ref/states/all/salt.states.mysql_user.html#module-salt.states.mysql_user>`_
+    See the `salt.states.mariadb_user
+    <http://docs.saltstack.com/en/latest/ref/states/all/salt.states.mariadb_user.html#module-salt.states.mariadb_user>`_
     docs for additional information on configuring hashed passwords.
 
     Make sure to **quote the passwords** in the pillar so YAML doesn't throw an exception.
 
-``mysql.remove_test_database``
+``mariadb.remove_test_database``
 ------------------------------
 
 .. warning::
 
-   Do not use this state if your MySQL instance has a database in use called ``test``.
+   Do not use this state if your MariaDB instance has a database in use called ``test``.
    If you do, it will be irrevocably removed!
 
 Remove the database called ``test``, normally created as part of a default
-MySQL installation.  This state is **not** included as part of the meta-state
+MariaDB installation.  This state is **not** included as part of the meta-state
 above as this name may conflict with a real database.
 
-``mysql.dev``
+``mariadb.dev``
 -------------
 
-Install the MySQL development libraries and header files.
+Install the MariaDB development libraries and header files.
 
 .. note::
-    Note that this state is not installed by the mysql meta-state unless you set
+    Note that this state is not installed by the mariadb meta-state unless you set
     your pillar data accordingly.
 
-``mysql.repo``
+``mariadb.repo``
 --------------
 
-Add the official MySQL 5.7 repository.
+Add the official MariaDB repository.
 
 .. note::
-    Note that this state currently only supports MySQL 5.7 for RHEL systems.
+    Note that this state currently only supports MariaDB 5.7 for RHEL systems.
     Debian and Suse support to be added. Also need to add the option to allow
-    selection of MySQL version (5.6 and 5.5 repos are added but disabled) and
+    selection of MariaDB version (5.6 and 5.5 repos are added but disabled) and
     changed enabled repository accordingly.
