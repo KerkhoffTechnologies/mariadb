@@ -1,11 +1,11 @@
-{% from "mysql/defaults.yaml" import rawmap with context %}
-{%- set mysql = salt['grains.filter_by'](rawmap, grain='os', merge=salt['pillar.get']('mysql:lookup')) %}
+{% from "mariadb/defaults.yaml" import rawmap with context %}
+{%- set mariadb = salt['grains.filter_by'](rawmap, grain='os', merge=salt['pillar.get']('mariadb:lookup')) %}
 {% set os_family = salt['grains.get']('os_family', None) %}
 
-{% if "config_directory" in mysql %}
-mysql_config_directory:
+{% if "config_directory" in mariadb %}
+mariadb_config_directory:
   file.directory:
-    - name: {{ mysql.config_directory }}
+    - name: {{ mariadb.config_directory }}
     {% if os_family in ['Debian', 'Gentoo', 'RedHat'] %}
     - user: root
     - group: root
@@ -13,12 +13,12 @@ mysql_config_directory:
     {% endif %}
     - makedirs: True
 
-{% if "server_config" in mysql %}
-mysql_server_config:
+{% if "server_config" in mariadb %}
+mariadb_server_config:
   file.managed:
-    - name: {{ mysql.config_directory + mysql.server_config.file }}
+    - name: {{ mariadb.config_directory + mariadb.server_config.file }}
     - template: jinja
-    - source: salt://mysql/files/server.cnf
+    - source: salt://mariadb/files/server.cnf
     {% if os_family in ['Debian', 'Gentoo', 'RedHat'] %}
     - user: root
     - group: root
@@ -26,12 +26,12 @@ mysql_server_config:
     {% endif %}
 {% endif %}
 
-{% if "galera_config" in mysql %}
-mysql_galera_config:
+{% if "galera_config" in mariadb %}
+mariadb_galera_config:
   file.managed:
-    - name: {{ mysql.config_directory + mysql.galera_config.file }}
+    - name: {{ mariadb.config_directory + mariadb.galera_config.file }}
     - template: jinja
-    - source: salt://mysql/files/galera.cnf
+    - source: salt://mariadb/files/galera.cnf
     {% if os_family in ['Debian', 'Gentoo', 'RedHat'] %}
     - user: root
     - group: root
@@ -39,12 +39,12 @@ mysql_galera_config:
     {% endif %}
 {% endif %}
 
-{% if "library_config" in mysql %}
-mysql_library_config:
+{% if "library_config" in mariadb %}
+mariadb_library_config:
   file.managed:
-    - name: {{ mysql.config_directory + mysql.library_config.file }}
+    - name: {{ mariadb.config_directory + mariadb.library_config.file }}
     - template: jinja
-    - source: salt://mysql/files/client.cnf
+    - source: salt://mariadb/files/client.cnf
     {% if os_family in ['Debian', 'Gentoo', 'RedHat'] %}
     - user: root
     - group: root
@@ -52,12 +52,12 @@ mysql_library_config:
     {% endif %}
 {% endif %}
 
-{% if "clients_config" in mysql %}
-mysql_clients_config:
+{% if "clients_config" in mariadb %}
+mariadb_clients_config:
   file.managed:
-    - name: {{ mysql.config_directory + mysql.clients_config.file }}
+    - name: {{ mariadb.config_directory + mariadb.clients_config.file }}
     - template: jinja
-    - source: salt://mysql/files/mysql-clients.cnf
+    - source: salt://mariadb/files/mariadb-clients.cnf
     {% if os_family in ['Debian', 'Gentoo', 'RedHat'] %}
     - user: root
     - group: root
@@ -67,14 +67,14 @@ mysql_clients_config:
 
 {% endif %}
 
-mysql_config:
+mariadb_config:
   file.managed:
-    - name: {{ mysql.config.file }}
+    - name: {{ mariadb.config.file }}
     - template: jinja
-{% if "config_directory" in mysql %}
-    - source: salt://mysql/files/my-include.cnf
+{% if "config_directory" in mariadb %}
+    - source: salt://mariadb/files/my-include.cnf
 {% else %}
-    - source: salt://mysql/files/my.cnf
+    - source: salt://mariadb/files/my.cnf
 {% endif %}
     {% if os_family in ['Debian', 'Gentoo', 'RedHat'] %}
     - user: root

@@ -1,30 +1,30 @@
-{% from "mysql/defaults.yaml" import rawmap with context %}
-{%- set mysql = salt['grains.filter_by'](rawmap, grain='os', merge=salt['pillar.get']('mysql:server:lookup')) %}
-{%- set mysql_root_user = salt['pillar.get']('mysql:server:root_user', 'root') %}
-{%- set mysql_root_pass = salt['pillar.get']('mysql:server:root_password', salt['grains.get']('server_id')) %}
-{%- set mysql_host = salt['pillar.get']('mysql:server:host', 'localhost') %}
-{% set mysql_salt_user = salt['pillar.get']('mysql:salt_user:salt_user_name', mysql_root_user) %}
-{% set mysql_salt_pass = salt['pillar.get']('mysql:salt_user:salt_user_password', mysql_root_pass) %}
+{% from "mariadb/defaults.yaml" import rawmap with context %}
+{%- set mariadb = salt['grains.filter_by'](rawmap, grain='os', merge=salt['pillar.get']('mariadb:server:lookup')) %}
+{%- set mariadb_root_user = salt['pillar.get']('mariadb:server:root_user', 'root') %}
+{%- set mariadb_root_pass = salt['pillar.get']('mariadb:server:root_password', salt['grains.get']('server_id')) %}
+{%- set mariadb_host = salt['pillar.get']('mariadb:server:host', 'localhost') %}
+{% set mariadb_salt_user = salt['pillar.get']('mariadb:salt_user:salt_user_name', mariadb_root_user) %}
+{% set mariadb_salt_pass = salt['pillar.get']('mariadb:salt_user:salt_user_password', mariadb_root_pass) %}
 
 {% set user_states = [] %}
 {% set user_hosts = [] %}
 
 include:
-  - mysql.python
+  - mariadb.python
 
-{% for name, user in salt['pillar.get']('mysql:user', {}).items() %}
+{% for name, user in salt['pillar.get']('mariadb:user', {}).items() %}
 
-{% set user_host = salt['pillar.get']('mysql:user:%s:host'|format(name)) %}
+{% set user_host = salt['pillar.get']('mariadb:user:%s:host'|format(name)) %}
 {% if user_host != '' %}
   {% set user_hosts = [user_host] %}
 {% else %}
-  {% set user_hosts = salt['pillar.get']('mysql:user:%s:hosts'|format(name)) %}
+  {% set user_hosts = salt['pillar.get']('mariadb:user:%s:hosts'|format(name)) %}
 {% endif %}
 
 {% if not user_hosts %}
-  {% set mine_target = salt['pillar.get']('mysql:user:%s:mine_hosts:target'|format(name)) %}
-  {% set mine_function = salt['pillar.get']('mysql:user:%s:mine_hosts:function'|format(name)) %}
-  {% set mine_expression_form = salt['pillar.get']('mysql:user:%s:mine_hosts:expr_form'|format(name)) %}
+  {% set mine_target = salt['pillar.get']('mariadb:user:%s:mine_hosts:target'|format(name)) %}
+  {% set mine_function = salt['pillar.get']('mariadb:user:%s:mine_hosts:function'|format(name)) %}
+  {% set mine_expression_form = salt['pillar.get']('mariadb:user:%s:mine_hosts:expr_form'|format(name)) %}
 
   {% if mine_target and mine_function and mine_expression_form %}
     {% set user_hosts = salt['mine.get'](mine_target, mine_function, mine_expression_form).values() %}
@@ -33,7 +33,7 @@ include:
 
 {% for host in user_hosts %}
 
-{% set state_id = 'mysql_user_' ~ name ~ '_' ~ host%}
+{% set state_id = 'mariadb_user_' ~ name ~ '_' ~ host%}
 {{ state_id }}:
   mysql_user.present:
     - name: {{ name }}
@@ -45,10 +45,10 @@ include:
   {%- else %}
     - allow_passwordless: True
   {%- endif %}
-    - connection_host: '{{ mysql_host }}'
-    - connection_user: '{{ mysql_salt_user }}'
-    {% if mysql_salt_pass %}
-    - connection_pass: '{{ mysql_salt_pass }}'
+    - connection_host: '{{ mariadb_host }}'
+    - connection_user: '{{ mariadb_salt_user }}'
+    {% if mariadb_salt_pass %}
+    - connection_pass: '{{ mariadb_salt_pass }}'
     {% endif %}
     - connection_charset: utf8
 
@@ -62,9 +62,9 @@ include:
     - user: {{ name }}
     - host: '{{ host }}'
     - connection_host: localhost
-    - connection_user: '{{ mysql_salt_user }}'
-    {% if mysql_salt_pass -%}
-    - connection_pass: '{{ mysql_salt_pass }}'
+    - connection_user: '{{ mariadb_salt_user }}'
+    {% if mariadb_salt_pass -%}
+    - connection_pass: '{{ mariadb_salt_pass }}'
     {% endif %}
     - connection_charset: utf8
     - require:
@@ -97,10 +97,10 @@ include:
     {% endif %}
     - user: {{ name }}
     - host: '{{ host }}'
-    - connection_host: '{{ mysql_host }}'
-    - connection_user: '{{ mysql_salt_user }}'
-    {% if mysql_salt_pass -%}
-    - connection_pass: '{{ mysql_salt_pass }}'
+    - connection_host: '{{ mariadb_host }}'
+    - connection_user: '{{ mariadb_salt_user }}'
+    {% if mariadb_salt_pass -%}
+    - connection_pass: '{{ mariadb_salt_pass }}'
     {% endif %}
     - connection_charset: utf8
     - require:

@@ -1,7 +1,7 @@
-{% from "mysql/defaults.yaml" import rawmap with context %}
-{%- set mysql = salt['grains.filter_by'](rawmap, grain='os', merge=salt['pillar.get']('mysql:server:lookup')) %}
+{% from "mariadb/defaults.yaml" import rawmap with context %}
+{%- set mariadb = salt['grains.filter_by'](rawmap, grain='os', merge=salt['pillar.get']('mariadb:server:lookup')) %}
 
-mysql_dev:
+mariadb_dev:
   pkg:
     - installed
-    - name: {{ mysql.dev }}
+    - name: {{ mariadb.dev }}

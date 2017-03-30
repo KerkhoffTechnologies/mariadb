@@ -1,9 +1,9 @@
 include:
-  - mysql.config
+  - mariadb.config
 
-{% from "mysql/defaults.yaml" import rawmap with context %}
-{%- set mysql = salt['grains.filter_by'](rawmap, grain='os', merge=salt['pillar.get']('mysql:lookup')) %}
+{% from "mariadb/defaults.yaml" import rawmap with context %}
+{%- set mariadb = salt['grains.filter_by'](rawmap, grain='os', merge=salt['pillar.get']('mariadb:lookup')) %}
 
-mysql:
+mariadb:
   pkg.installed:
-    - name: {{ mysql.client }}
+    - name: {{ mariadb.client }}
